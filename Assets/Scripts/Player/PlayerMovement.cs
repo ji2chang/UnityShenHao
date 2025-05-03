@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     public float speed = 6f;
     public float rotationSmoothTime = 0.1f;
+
+    private float _gravity = -1f;
     
     private float _targetRot;
     private float _rotationVelocity;
@@ -26,13 +28,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        ApplyGravity();
         HandleMovement();
     }
 
+    private void ApplyGravity()
+    {
+        Vector3 movement = new Vector3(0f, _gravity, 0f);
+        _controller.Move(movement);
+    }
     private void HandleMovement()
     {
         Vector3 movement = Vector3.zero;
-        
         if (_moveInput != Vector2.zero)
         {
             // 计算输入方向
