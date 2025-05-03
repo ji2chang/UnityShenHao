@@ -14,7 +14,6 @@ public class PlayerMovement : MonoBehaviour
     private float _targetRot;
     private float _rotationVelocity;
     private Vector2 _moveInput;
-    private float _verticalVelocity; // 用于处理重力
     
     void Start()
     {
@@ -27,20 +26,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        ApplyGravity();
         HandleMovement();
-    }
-
-    private void ApplyGravity()
-    {
-        if (_controller.isGrounded)
-        {
-            _verticalVelocity = -1f; // 轻微向下的力确保角色保持在地面
-        }
-        else
-        {
-            _verticalVelocity += Physics.gravity.y * Time.deltaTime;
-        }
     }
 
     private void HandleMovement()
@@ -70,8 +56,6 @@ public class PlayerMovement : MonoBehaviour
                       speed * Time.deltaTime;
         }
         
-        // 应用重力和移动
-        movement.y = _verticalVelocity * Time.deltaTime;
         _controller.Move(movement);
     }
 
