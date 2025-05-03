@@ -1,44 +1,82 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerInput))] // 确保对象有PlayerInput组件
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : MonoBehaviour
 {
-
     private CharacterController _controller;
     private GameObject _mainCamera;
-
+    
+    [Header("Movement Settings")]
+    public float speed = 6f;
+    public float rotationSmoothTime = 0.1f;
+    
+    private float _targetRot;
+    private float _rotationVelocity;
+    private Vector2 _moveInput;
+    private float _verticalVelocity; // 用于处理重力
+    
     void Start()
     {
-        if ( _mainCamera == null)
+        if (_mainCamera == null)
         {
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
         _controller = GetComponent<CharacterController>();
     }
 
-    public float speed = 6f;
-    //目标旋转角度
-    float _targetRot = 0f;
-
     void Update()
     {
-        if (_move != Vector2.zero)
+        ApplyGravity();
+        HandleMovement();
+    }
+
+    private void ApplyGravity()
+    {
+        if (_controller.isGrounded)
         {
-            Vector3 inputDir = new Vector3(_move.x, 0f, _move.y).normalized;
-            _targetRot = Mathf.Atan2(inputDir.x,inputDir.z) * Mathf.Rad2Deg +
-                        _mainCamera.transform.eulerAngles.y;
-            //转起来
-            transform.rotation = Quaternion.Euler(0f, _targetRot, 0f);
-            Vector3 targetDir = Quaternion.Euler(0f, _targetRot, 0f) * Vector3.forward;
-            //动起来
-            _controller.Move(targetDir.normalized * speed * Time.deltaTime);
+            _verticalVelocity = -1f; // 轻微向下的力确保角色保持在地面
+        }
+        else
+        {
+            _verticalVelocity += Physics.gravity.y * Time.deltaTime;
         }
     }
 
-    Vector2 _move;
+    private void HandleMovement()
+    {
+        Vector3 movement = Vector3.zero;
+        
+        if (_moveInput != Vector2.zero)
+        {
+            // 计算输入方向
+            Vector3 inputDir = new Vector3(_moveInput.x, 0f, _moveInput.y).normalized;
+            
+            // 计算目标旋转角度（相对于相机）
+            _targetRot = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + 
+                         _mainCamera.transform.eulerAngles.y;
+            
+            // 平滑旋转
+            float currentRot = Mathf.SmoothDampAngle(
+                transform.eulerAngles.y, 
+                _targetRot, 
+                ref _rotationVelocity, 
+                rotationSmoothTime);
+            
+            transform.rotation = Quaternion.Euler(0f, currentRot, 0f);
+            
+            // 计算移动方向
+            movement = Quaternion.Euler(0f, _targetRot, 0f) * Vector3.forward * 
+                      speed * Time.deltaTime;
+        }
+        
+        // 应用重力和移动
+        movement.y = _verticalVelocity * Time.deltaTime;
+        _controller.Move(movement);
+    }
+
     void OnMove(InputValue value)
     {
-        _move = value.Get<Vector2>();
+        _moveInput = value.Get<Vector2>();
     }
 }
