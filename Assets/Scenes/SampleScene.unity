@@ -1416,6 +1416,9 @@ MonoBehaviour:
   TopClamp: 70
   BottomClamp: -30
   RotationSmoothTime: 0.1
+  mouseController: {fileID: 1899729949}
+  MaxHSpeed: 360
+  MaxVSpeed: 90
 --- !u!143 &1899729948
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1441,6 +1444,18 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.95, z: 0}
+--- !u!114 &1899729949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899729943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2afcb47de84efd45bc9ab8210dfb2f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2039262645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1913,6 +1928,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c4a64b6d55cbee040a5441bc88432566, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1899729945}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c4a64b6d55cbee040a5441bc88432566, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1899729949}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c4a64b6d55cbee040a5441bc88432566, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1899729948}
