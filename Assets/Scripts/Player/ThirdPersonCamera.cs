@@ -12,11 +12,17 @@ public class ThirdPersonCamera : MonoBehaviour
     public float BottomClamp = -30.0f;
     [Tooltip("旋转平滑时间")]
     public float RotationSmoothTime = 0.1f;
+    [Tooltip("鼠标控制器")]
+    public MouseController mouseController;
+    [Tooltip("最大横向旋转速度")]
+    public float MaxHSpeed = 360f;
+    [Tooltip("最大竖向旋转速度")]
+    public float MaxVSpeed = 180f;
 
     private const float _threshold = 0.01f;
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
-    private Vector2 _look;
+    
 
     private void Start()
     {
@@ -35,11 +41,17 @@ public class ThirdPersonCamera : MonoBehaviour
 
     private void CameraRotation()
     {
+        Vector2 _look = mouseController.GetMouseDelta();
+        
         if (_look.sqrMagnitude >= _threshold)
         {
+            float deltaHSpeed = Time.deltaTime * MaxHSpeed;
+            float deltaVSpeed = Time.deltaTime * MaxVSpeed;
+            _look.x = Mathf.Clamp(_look.x,-deltaHSpeed,deltaHSpeed);
+            _look.y = Mathf.Clamp(_look.y,-deltaVSpeed,deltaVSpeed);
             // 计算目标角度
             _cinemachineTargetYaw += _look.x;
-            _cinemachineTargetPitch += _look.y;
+            _cinemachineTargetPitch -= _look.y;
         }
 
         // 限制角度范围
@@ -55,10 +67,5 @@ public class ThirdPersonCamera : MonoBehaviour
         if (lfAngle < -360f) lfAngle += 360f;
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
-    }
-
-    public void OnLook(InputValue value)
-    {
-        _look = value.Get<Vector2>();
     }
 }

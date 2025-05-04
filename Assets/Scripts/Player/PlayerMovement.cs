@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
         _controller.Move(movement);
     }
 
-    void OnMove(InputValue value)
+    public void OnMove(InputValue value)
     {
         _moveInput = value.Get<Vector2>();
     }
